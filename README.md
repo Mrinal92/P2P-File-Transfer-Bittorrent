@@ -1,225 +1,241 @@
 # Bit Torrent: Peer-to-Peer Group-Based File Sharing System
 
-The Mini-torrent project is a peer-to-peer file sharing network, offering functionalities such as sharing files, downloading files, and managing shared files within a group. It resembles the BitTorrent system found on the internet.
+The **Bit Torrent** project is a peer-to-peer file sharing network that offers functionalities such as sharing files, downloading files, and managing shared files within a group. It is inspired by the BitTorrent system commonly used on the internet.
+
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+  - [Software Requirements](#software-requirements)
+  - [Platform](#platform)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Tracker Commands](#tracker-commands)
+  - [Client Commands](#client-commands)
+- [Working](#working)
+- [Features](#features)
+- [Assumptions](#assumptions)
+- [Contact](#contact)
 
 ## Architecture
 
-The architecture consists of multiple clients (users) and a central tracker that stores metadata about which users have which files, creating a file-user mapping.
+The system architecture comprises multiple clients (users) and a central tracker. The tracker stores metadata about which users have which files, facilitating peer communication for efficient file sharing.
 
-
+![Architecture Diagram](architecture_diagram.png) *(Include an actual diagram if available)*
 
 ## Prerequisites
 
 ### Software Requirements
 
-1. G++ compiler
-   - To install G++: `sudo apt-get install g++`
+1. **G++ Compiler**
+   - **Installation:**
+     ```shell
+     sudo apt-get update
+     sudo apt-get install g++
+     ```
 
-2. OpenSSL library
-   - To install the OpenSSL library: `sudo apt-get install openssl`
+2. **OpenSSL Library**
+   - **Installation:**
+     ```shell
+     sudo apt-get install libssl-dev
+     ```
 
 ### Platform
 
-- Linux
+- **Operating System:** Linux
 
 ## Installation
 
-1. Navigate to the client directory:
+Follow these steps to build and set up the client and tracker components.
+
+1. **Clone the Repository:**
    ```shell
-   cd client
+   git clone https://github.com/yourusername/bit-torrent.git
+   cd bit-torrent
 
-    Build the client:
+    Build the Client:
 
-    shell
-
+cd client
 make
 
-Navigate to the tracker directory:
-
-shell
+Build the Tracker:
 
 cd ../tracker
-
-Build the tracker:
-
-shell
-
 make
 
-Return to the main directory:
-
-shell
+Return to the Main Directory:
 
     cd ..
 
 Usage
-Tracker
+Tracker Commands
 
 Run Tracker:
 
-To run the tracker, use the following command in the tracker directory:
-
-shell
+To start a tracker, navigate to the tracker directory and execute the following command:
 
 cd tracker
-./tracker <TRACKER INFO FILE> <TRACKER NUMBER>
+./tracker <TRACKER_INFO_FILE> <TRACKER_NUMBER>
 
-For example:
-
-shell
+Example:
 
 ./tracker tracker_info.txt 1
 
-The <TRACKER INFO FILE> contains the IP and port details of all the trackers. Here's an example:
+    <TRACKER_INFO_FILE>: A file containing IP and port details of all trackers.
 
-yaml
+    Example tracker_info.txt:
 
-127.0.0.1
-5353
-127.0.0.1
-50686
+    127.0.0.1
+    5353
+    127.0.0.1
+    50686
 
 Close Tracker:
 
-To close the tracker, simply type:
-
-shell
+To gracefully shut down the tracker, type the following command within the tracker interface:
 
 quit
 
-Client
+Client Commands
 
 Run Client:
 
-To run a client, navigate to the client directory and use the following command:
-
-shell
+To start a client, navigate to the client directory and execute:
 
 cd client
-./client <IP>:<PORT> <TRACKER INFO FILE>
+./client <IP>:<PORT> <TRACKER_INFO_FILE>
 
-For example:
-
-shell
+Example:
 
 ./client 127.0.0.1:18000 tracker_info.txt
 
 Available Client Commands:
 
-    Create user account:
-
-    shell
+    Create User Account:
 
 create_user <user_id> <password>
 
 Login:
 
-shell
-
 login <user_id> <password>
 
 Create Group:
-
-shell
 
 create_group <group_id>
 
 Join Group:
 
-shell
-
 join_group <group_id>
 
 Leave Group:
 
-shell
-
 leave_group <group_id>
 
-List pending requests:
-
-shell
+List Pending Join Requests:
 
 list_requests <group_id>
 
 Accept Group Joining Request:
 
-shell
-
 accept_request <group_id> <user_id>
 
-List All Group In Network:
-
-shell
+List All Groups in Network:
 
 list_groups
 
-List All Sharable Files In Group:
-
-shell
+List All Sharable Files in Group:
 
 list_files <group_id>
 
 Upload File:
 
-shell
-
 upload_file <file_path> <group_id>
 
 Download File:
-
-shell
 
 download_file <group_id> <file_name> <destination_path>
 
 Logout:
 
-shell
-
 logout
 
 Show Downloads:
 
-shell
-
 show_downloads
 
-Stop Sharing:
-
-shell
+Stop Sharing a File:
 
     stop_share <group_id> <file_name>
 
+Output Format for Downloads:
+
+    Downloading:
+
+[D] [group_id] filename
+
+Complete:
+
+    [C] [group_id] filename
+
 Working
 
-    Users create accounts and register with the tracker.
+    User Registration and Login:
+        Users create accounts and register with the tracker.
+        Authentication is required for login using user credentials.
 
-    Users log in using their credentials.
+    Group Management:
+        Users can create groups, automatically becoming the group owner.
+        Owners can manage group memberships by accepting or rejecting join requests.
+        Users can join or leave existing groups.
 
-    The tracker maintains information about clients and the files they share to facilitate communication between peers.
+    File Sharing:
+        Users can share files within a group by providing the filename and SHA1 hash.
+        Shared files are mapped to the user's IP and port in the tracker.
 
-    Users can create groups and become group admins.
+    Downloading Files:
+        Users can download files from the group by fetching peer information from the tracker.
+        Files are downloaded in parallel from multiple peers, ensuring efficient and reliable transfers.
+        Each file is divided into 512KB pieces, with SHA1 hashes verifying integrity.
 
-    Users can fetch a list of all groups on the server.
+    Concurrency and Resilience:
+        The system supports multiple simultaneous downloads and uploads.
+        At least one tracker remains online to maintain system availability.
+        Trackers are synchronized to ensure consistent metadata across the network.
 
-    Users can join/leave groups.
+    Session Management:
+        Upon login, previously shared files are automatically set to sharing mode.
+        Logging out temporarily stops sharing files until the next login.
 
-    Group admins can accept group join requests.
+Features
 
-    Users can share files across groups, including filename and SHA1 hash.
+    User Management:
+        Account creation and secure authentication.
 
-    Download files by retrieving peer information from the tracker.
+    Group Management:
+        Create, join, leave groups.
+        Manage group memberships with admin controls.
 
-    Show downloads and stop sharing files.
+    File Sharing and Downloading:
+        Share files with SHA1 integrity verification.
+        Download files in parallel from multiple peers.
+        Custom piece selection algorithm to optimize download efficiency.
 
-    Upon login, previously shared files are automatically set to the sharing mode.
+    Tracker Synchronization:
+        Dual tracker system ensures metadata consistency and system reliability.
+
+    Concurrency Support:
+        Handle multiple downloads and uploads simultaneously without performance degradation.
 
 Assumptions
 
-    Only one tracker is implemented, and it should always be online.
+    Tracker Availability:
+        Only one tracker is implemented, and it should remain online at all times.
 
-    Peer details are not persistent across sessions, even if logging in from different IP addresses.
+    Peer Details Persistence:
+        Peer information is not persistent across sessions, even if users log in from different IP addresses.
 
-    SHA1 integrity checking may not work correctly for binary files, although most files would likely download correctly.
+    File Integrity:
+        SHA1 integrity checking may not work correctly for certain binary files, though most files should download correctly.
 
-    File paths should be absolute.
+    File Paths:
+        File paths provided during upload and download operations should be absolute.
