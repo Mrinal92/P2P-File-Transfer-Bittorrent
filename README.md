@@ -21,6 +21,9 @@ The **Bit Torrent** project is a peer-to-peer file sharing network that offers f
 
 The system architecture comprises multiple clients (users) and a central tracker. The tracker stores metadata about which users have which files, facilitating peer communication for efficient file sharing.
 
+![139272264-5951ea87-0a67-4f53-a49a-c6003274e550](https://github.com/user-attachments/assets/52909976-85ff-4dea-8d7a-8766dda74ebd)
+
+
 ## Prerequisites
 
 ### Software Requirements
