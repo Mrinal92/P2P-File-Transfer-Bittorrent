@@ -1,4 +1,4 @@
-# Bit Torrent: Peer-to-Peer Group-Based File Sharing System
+# Mini Bit-Torrent: Peer-to-Peer Group-Based File Sharing System
 
 The **Bit Torrent** project is a peer-to-peer file sharing network that offers functionalities such as sharing files, downloading files, and managing shared files within a group. It is inspired by the BitTorrent system commonly used on the internet.
 
